@@ -6,3 +6,6 @@ RUN pip install jupyterlab_latex & \
 
 RUN jupyter labextension install jupyterlab-s3-browser & \
     pip install jupyterlab-s3-browser
+
+RUN jupyter serverextension enable --py jupyterlab_s3_browser
+

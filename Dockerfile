@@ -1,4 +1,4 @@
-FROM jupyter/datascience-notebook
+FROM jupyter/datascience-notebook:lab-1.2.5
 
 RUN pip install jupyterlab_latex & \
     jupyter labextension install @jupyterlab/latex & \

@@ -8,6 +8,9 @@ RUN jupyter labextension install jupyterlab-s3-browser & \
     pip install jupyterlab-s3-browser
 
 RUN jupyter serverextension enable --py jupyterlab_s3_browser
+
+RUN pip install jupyterlab-git
+
 RUN jupyter lab build
 
 

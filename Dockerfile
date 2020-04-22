@@ -13,4 +13,4 @@ RUN pip install jupyterlab-git
 
 RUN jupyter lab build
 
-
+RUN pip install s3fs

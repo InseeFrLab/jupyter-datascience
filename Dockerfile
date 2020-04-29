@@ -22,7 +22,6 @@ RUN mkdir -p $HADOOP_HOME $SPARK_HOME
 
 RUN cd /tmp \
     && wget ${HADOOP_URL}/hadoop-${HADOOP_VERSION}.tar.gz \
-    && echo "${HADOOP_SHA256} hadoop-${HADOOP_VERSION}.tar.gz" | sha256sum -c - \
     && tar xzf hadoop-${HADOOP_VERSION}.tar.gz -C $HADOOP_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget ${HADOOP_AWS_URL}/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
     && mkdir -p $HADOOP_HOME/share/lib/common/lib \

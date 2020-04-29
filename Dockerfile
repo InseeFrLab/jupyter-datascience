@@ -38,4 +38,10 @@ RUN pip install jupyterlab-git jupyterlab_latex & \
 
 RUN jupyter lab build
 
+ENV PYTHONPATH="$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip"
+ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
+ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk-amd64/jre/"
+ENV HADOOP_OPTIONAL_TOOLS "hadoop-aws"
+ENV PATH="${JAVA_HOME}/bin:${SPARK_HOME}/bin:${HADOOP_HOME}/bin:${PATH}"
+
 VOLUME ["/home/jovyan"]

@@ -9,7 +9,7 @@ ARG HADOOP_SHA256="2d62709c3d7144fcaafc60e18d0fa03d7d477cc813e45526f3646030cd87d
 ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-3.2.1/"
 ARG HADOOP_VERSION=3.2.1
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
-ARG SPARK_URL="https://www.apache.org/dyn/closer.lua/spark/spark-2.4.5/"
+ARG SPARK_URL="https://downloads.apache.org/spark/spark-2.4.5/"
 ARG SPARK_VERSION=2.4.5
 
 ENV SPARK_HOME="/opt/spark"
@@ -21,12 +21,12 @@ RUN apt-get -y update && \
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME
 
 RUN cd /tmp \
-    && wget ${HADOOP_URL}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && wget ${HADOOP_URL}hadoop-${HADOOP_VERSION}.tar.gz \
     && tar xzf hadoop-${HADOOP_VERSION}.tar.gz -C $HADOOP_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget ${HADOOP_AWS_URL}/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
     && mkdir -p $HADOOP_HOME/share/lib/common/lib \
     && mv hadoop-aws-${HADOOP_VERSION}.jar $HADOOP_HOME/share/lib/common/lib \
-    && wget ${SPARK_URL}/spark-${SPARK_VERSION}-bin-without-hadoop.tgz \
+    && wget ${SPARK_URL}spark-${SPARK_VERSION}-bin-without-hadoop.tgz \
     && tar xzf spark-${SPARK_VERSION}-bin-without-hadoop.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && rm -rf /tmp/*
 

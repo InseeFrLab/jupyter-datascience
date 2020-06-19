@@ -3,12 +3,12 @@ services:
 addons:
   organization: 'inseefrlab'
 script:
-  - docker build -t inseefrlab/jupyter-datascience:v2.4.6-3.2.1 .
+  - docker build -t inseefrlab/jupyter-datascience:v3.0.0-3.2.1 .
 deploy:
   skip_cleanup: true
   provider: script
   script:
     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    && docker push inseefrlab/jupyter-datascience:v2.4.6-3.2.1
+    && docker push inseefrlab/jupyter-datascience:v3.0.0-3.2.1
   on:
     branch: master

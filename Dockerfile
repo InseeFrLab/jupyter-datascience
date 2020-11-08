@@ -16,7 +16,7 @@ ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
 
 RUN apt-get -y update && \
-    apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
+    apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java tini && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME
@@ -40,6 +40,7 @@ RUN pip install jupyterlab-git jupyterlab_latex & \
 RUN jupyter lab build
 
 ADD spark-env.sh $SPARK_HOME/conf
+ADD entrypoint.sh /opt/entrypoint.sh
 
 ENV PYTHONPATH="$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip"
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
@@ -48,3 +49,4 @@ ENV HADOOP_OPTIONAL_TOOLS "hadoop-aws"
 ENV PATH="${JAVA_HOME}/bin:${SPARK_HOME}/bin:${HADOOP_HOME}/bin:${PATH}"
 
 VOLUME ["/home/jovyan"]
+ENTRYPOINT [ "/opt/entrypoint.sh" ]

@@ -45,7 +45,7 @@ case "$SPARK_K8S_CMD" in
       ;;
     *)
       echo "Non-spark-on-k8s command provided, proceeding in pass-through mode..."
-      exec /opt/conda/bin/tini "$@"
+      exec /opt/conda/bin/tini -g -- "$@"
       ;;
 esac
 
@@ -130,4 +130,4 @@ case "$SPARK_K8S_CMD" in
 esac
 
 # Execute the container CMD under tini for better hygiene
-exec /opt/conda/bin/tini "${CMD[@]}"
+exec /opt/conda/bin/tini -g -- "${CMD[@]}"

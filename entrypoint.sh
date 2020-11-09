@@ -48,7 +48,7 @@ case "$SPARK_K8S_CMD" in
       exec /opt/conda/bin/tini -g -- "$@"
       ;;
 esac
-SPARK_DIST_CLASSPATH=$(hadoop classpath)
+export SPARK_DIST_CLASSPATH=$(hadoop classpath)
 SPARK_CLASSPATH="$SPARK_CLASSPATH:${SPARK_HOME}/jars/*"
 env | grep SPARK_JAVA_OPT_ | sort -t_ -k4 -n | sed 's/[^=]*=\(.*\)/\1/g' > /tmp/java_opts.txt
 readarray -t SPARK_EXECUTOR_JAVA_OPTS < /tmp/java_opts.txt

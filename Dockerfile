@@ -19,6 +19,11 @@ RUN apt-get -y update && \
     apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
     rm -rf /var/lib/apt/lists/*
 
+# Installing mc
+
+RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc && \
+    chmod +x /usr/local/bin/mc
+    
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME
 
 RUN cd /tmp \

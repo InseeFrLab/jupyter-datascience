@@ -41,7 +41,7 @@ RUN cd /tmp \
     && tar xzf spark-${SPARK_VERSION}-bin-without-hadoop.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && rm -rf /tmp/*
 
-RUN pip install s3fs hvac boto3
+RUN pip install s3fs hvac boto3 pyarrow
 
 RUN pip install jupyterlab-git jupyterlab_latex & \
     jupyter labextension install --no-build @jupyterlab/git @jupyterlab/latex & \

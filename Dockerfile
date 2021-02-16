@@ -11,9 +11,12 @@ ARG HADOOP_VERSION=3.2.1
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
 ARG SPARK_URL="https://downloads.apache.org/spark/spark-3.0.1/"
 ARG SPARK_VERSION=3.0.1
+ARG HIVE_URL="https://downloads.apache.org/hive/hive-3.1.2/"
+ARG HIVE_VERSION=3.1.2
 
 ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
+ENV HIVE_HOME="/opt/hive"
 
 RUN apt-get -y update && \
     apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
@@ -29,7 +32,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
     
-RUN mkdir -p $HADOOP_HOME $SPARK_HOME
+RUN mkdir -p $HADOOP_HOME $SPARK_HOME $HIVE_HOME
 
 RUN cd /tmp \
     && wget ${HADOOP_URL}hadoop-${HADOOP_VERSION}.tar.gz \
@@ -39,6 +42,12 @@ RUN cd /tmp \
     && mv hadoop-aws-${HADOOP_VERSION}.jar $HADOOP_HOME/share/lib/common/lib \
     && wget ${SPARK_URL}spark-${SPARK_VERSION}-bin-without-hadoop.tgz \
     && tar xzf spark-${SPARK_VERSION}-bin-without-hadoop.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && wget ${HIVE_URL}apache-hive-${HIVE_VERSION}-bin.tar.gz \
+    && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C $HIVE_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && wget https://jdbc.postgresql.org/download/postgresql-42.2.18.jar \
+    && move postgresql-42.2.18.jar $HIVE_HOME/lib/postgresql-jdbc.jar \
+    && rm $HIVE_HOME/lib/guava-19.0.jar \
+    && cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib/
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow

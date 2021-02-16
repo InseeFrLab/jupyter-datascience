@@ -45,7 +45,7 @@ RUN cd /tmp \
     && wget ${HIVE_URL}apache-hive-${HIVE_VERSION}-bin.tar.gz \
     && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C $HIVE_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget https://jdbc.postgresql.org/download/postgresql-42.2.18.jar \
-    && move postgresql-42.2.18.jar $HIVE_HOME/lib/postgresql-jdbc.jar \
+    && mv postgresql-42.2.18.jar $HIVE_HOME/lib/postgresql-jdbc.jar \
     && rm $HIVE_HOME/lib/guava-19.0.jar \
     && cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib/ \
     && rm -rf /tmp/*

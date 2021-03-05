@@ -48,6 +48,11 @@ RUN cd /tmp \
     && mv postgresql-42.2.18.jar $HIVE_HOME/lib/postgresql-jdbc.jar \
     && rm $HIVE_HOME/lib/guava-19.0.jar \
     && cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib/ \
+    && wget https://repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar \
+    && mv jline-2.14.6.jar $HIVE_HOME/lib/ \
+    && rm $HIVE_HOME/lib/jline-2.12.jar
+    && wget https://repo1.maven.org/maven2/org/apache/spark/spark-hive_2.12/3.0.1/spark-hive_2.12-3.0.1.jar
+    && mv spark-hive_2.12-3.0.1.jar $SPARK_HOME/jars/
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow

@@ -51,8 +51,8 @@ RUN cd /tmp \
     && wget https://repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar \
     && mv jline-2.14.6.jar $HIVE_HOME/lib/ \
     && rm $HIVE_HOME/lib/jline-2.12.jar \
-    && wget https://repo1.maven.org/maven2/org/apache/spark/spark-hive_2.12/3.0.1/spark-hive_2.12-3.0.1.jar \
-    && mv spark-hive_2.12-3.0.1.jar $SPARK_HOME/jars/ \
+    && wget https://repo1.maven.org/maven2/org/apache/spark/spark-hive_2.12/3.1.1/spark-hive_2.12-3.1.1.jar \
+    && mv spark-hive_2.12-3.1.1.jar $SPARK_HOME/jars/ \
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow

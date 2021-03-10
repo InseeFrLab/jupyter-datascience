@@ -11,8 +11,8 @@ ARG HADOOP_VERSION=3.2.1
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
 ARG SPARK_URL="https://downloads.apache.org/spark/spark-3.1.1/"
 ARG SPARK_VERSION=3.1.1
-ARG HIVE_URL="https://downloads.apache.org/hive/hive-3.1.2/"
-ARG HIVE_VERSION=3.1.2
+ARG HIVE_URL="https://archive.apache.org/dist/hive/hive-2.3.7/apache-hive-2.3.7-bin.tar.gz"
+ARG HIVE_VERSION=2.3.7
 
 ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"

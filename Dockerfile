@@ -40,8 +40,8 @@ RUN cd /tmp \
     && wget ${HADOOP_AWS_URL}/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
     && mkdir -p $HADOOP_HOME/share/lib/common/lib \
     && mv hadoop-aws-${HADOOP_VERSION}.jar $HADOOP_HOME/share/lib/common/lib \
-    && wget https://minio.lab.sspcloud.fr/alexisdondon/spark/spark-3.1.1-bin-custom-spark.tgz \
-    && tar xzf spark-3.1.1-bin-custom-spark.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && https://minio.lab.sspcloud.fr/alexisdondon/spark/spark-3.1.1-bin-custom-spark-hadoopprovided.tgz \
+    && tar xzf spark-3.1.1-bin-custom-spark-hadoopprovided.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget ${HIVE_URL}apache-hive-${HIVE_VERSION}-bin.tar.gz \
     && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C $HIVE_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget https://jdbc.postgresql.org/download/postgresql-42.2.18.jar \

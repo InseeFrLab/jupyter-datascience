@@ -35,7 +35,9 @@ RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
-    
+
+RUN kubectl completion bash >/etc/bash_completion.d/kubectl
+
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME $HIVE_HOME
 
 RUN cd /tmp \

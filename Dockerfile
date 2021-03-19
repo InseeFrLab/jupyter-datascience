@@ -19,7 +19,11 @@ ENV SPARK_HOME="/opt/spark"
 ENV HIVE_HOME="/opt/hive"
 
 RUN apt-get -y update && \
-    apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
+    apt-get install --no-install-recommends -y openjdk-8-jre-headless \
+                                               ca-certificates-java \
+                                               vim \
+                                               jq \
+                                               bash-completion && \
     rm -rf /var/lib/apt/lists/*
 
 # Installing mc

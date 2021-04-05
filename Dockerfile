@@ -11,15 +11,19 @@ ARG HADOOP_VERSION=3.2.1
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
 ARG SPARK_URL="https://downloads.apache.org/spark/spark-3.1.1/"
 ARG SPARK_VERSION=3.1.1
-ARG HIVE_URL="https://downloads.apache.org/hive/hive-3.1.2/"
-ARG HIVE_VERSION=3.1.2
+ARG HIVE_URL="https://archive.apache.org/dist/hive/hive-2.3.7/"
+ARG HIVE_VERSION=2.3.7
 
 ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
 ENV HIVE_HOME="/opt/hive"
 
 RUN apt-get -y update && \
-    apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
+    apt-get install --no-install-recommends -y openjdk-8-jre-headless \
+                                               ca-certificates-java \
+                                               vim \
+                                               jq \
+                                               bash-completion && \
     rm -rf /var/lib/apt/lists/*
 
 # Installing mc
@@ -27,11 +31,22 @@ RUN apt-get -y update && \
 RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc && \
     chmod +x /usr/local/bin/mc
 
+# Installing vault
+
+RUN apt-get install -y unzip
+RUN cd /usr/bin && \
+    wget https://releases.hashicorp.com/vault/1.3.4/vault_1.3.4_linux_amd64.zip && \
+    unzip vault_1.3.4_linux_amd64.zip && \
+    rm vault_1.3.4_linux_amd64.zip
+RUN vault -autocomplete-install
+
 # Installing kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
-    
+
+RUN kubectl completion bash >/etc/bash_completion.d/kubectl
+
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME $HIVE_HOME
 
 RUN cd /tmp \
@@ -40,19 +55,17 @@ RUN cd /tmp \
     && wget ${HADOOP_AWS_URL}/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
     && mkdir -p $HADOOP_HOME/share/lib/common/lib \
     && mv hadoop-aws-${HADOOP_VERSION}.jar $HADOOP_HOME/share/lib/common/lib \
-    && wget ${SPARK_URL}spark-${SPARK_VERSION}-bin-without-hadoop.tgz \
-    && tar xzf spark-${SPARK_VERSION}-bin-without-hadoop.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && wget https://minio.lab.sspcloud.fr/alexisdondon/spark/spark-3.1.1-bin-custom-spark-hadoopprovided.tgz \
+    && tar xzf spark-3.1.1-bin-custom-spark-hadoopprovided.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget ${HIVE_URL}apache-hive-${HIVE_VERSION}-bin.tar.gz \
     && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C $HIVE_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget https://jdbc.postgresql.org/download/postgresql-42.2.18.jar \
     && mv postgresql-42.2.18.jar $HIVE_HOME/lib/postgresql-jdbc.jar \
-    && rm $HIVE_HOME/lib/guava-19.0.jar \
+    && rm $HIVE_HOME/lib/guava-14.0.1.jar \
     && cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib/ \
     && wget https://repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar \
     && mv jline-2.14.6.jar $HIVE_HOME/lib/ \
     && rm $HIVE_HOME/lib/jline-2.12.jar \
-    && wget https://repo1.maven.org/maven2/org/apache/spark/spark-hive_2.12/3.1.1/spark-hive_2.12-3.1.1.jar \
-    && mv spark-hive_2.12-3.1.1.jar $SPARK_HOME/jars/ \
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow

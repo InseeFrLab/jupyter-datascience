@@ -1,29 +1,28 @@
-FROM jupyter/datascience-notebook:lab-1.2.5
+FROM jupyter/datascience-notebook:python-3.9.7
 
 USER root
 
-# checksum source for libmesos-bundle: https://downloads.mesosphere.com/libmesos-bundle/libmesos-bundle-1.14-alpha.tar.gz.sha256
-
-ARG HADOOP_MAJOR_VERSION="3.2"
-ARG HADOOP_SHA256="2d62709c3d7144fcaafc60e18d0fa03d7d477cc813e45526f3646030cd87dbf010aeccf3f4ce795b57b08d2884b3a55f91fe9d74ac144992d2dfe444a4bbf34ee"
-ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-3.2.1/"
-ARG HADOOP_VERSION=3.2.1
-ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
-ARG SPARK_URL="https://downloads.apache.org/spark/spark-3.1.1/"
-ARG SPARK_VERSION=3.1.1
-ARG HIVE_URL="https://archive.apache.org/dist/hive/hive-2.3.7/"
+ARG SPARK_VERSION=3.1.2
+ARG HADOOP_VERSION=3.3.1
 ARG HIVE_VERSION=2.3.7
+
+ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}"
+ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
+ARG HIVE_URL="https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}"
+ARG SPARK_BUILD="spark-${SPARK_VERSION}-bin-hadoop-${HADOOP_VERSION}-hive-${HIVE_VERSION}"
+ARG S3_BUCKET="https://minio.lab.sspcloud.fr/projet-onyxia/spark-build"
 
 ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
 ENV HIVE_HOME="/opt/hive"
 
 RUN apt-get -y update && \
-    apt-get install --no-install-recommends -y openjdk-8-jre-headless \
+    apt-get install --no-install-recommends -y openjdk-11-jre-headless \
                                                ca-certificates-java \
                                                vim \
                                                jq \
-                                               bash-completion && \
+                                               bash-completion \ 
+                                               unzip && \
     rm -rf /var/lib/apt/lists/*
 
 # Installing mc
@@ -33,11 +32,10 @@ RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc
 
 # Installing vault
 
-RUN apt-get install -y unzip
 RUN cd /usr/bin && \
-    wget https://releases.hashicorp.com/vault/1.3.4/vault_1.3.4_linux_amd64.zip && \
-    unzip vault_1.3.4_linux_amd64.zip && \
-    rm vault_1.3.4_linux_amd64.zip
+    wget -O vault.zip https://releases.hashicorp.com/vault/1.8.4/vault_1.8.4_linux_amd64.zip && \
+    unzip vault.zip && \
+    rm vault.zip
 RUN vault -autocomplete-install
 
 # Installing kubectl
@@ -50,31 +48,27 @@ RUN kubectl completion bash >/etc/bash_completion.d/kubectl
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME $HIVE_HOME
 
 RUN cd /tmp \
-    && wget ${HADOOP_URL}hadoop-${HADOOP_VERSION}.tar.gz \
-    && tar xzf hadoop-${HADOOP_VERSION}.tar.gz -C $HADOOP_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && wget ${HADOOP_URL}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && tar xzf hadoop-${HADOOP_VERSION}.tar.gz -C ${HADOOP_HOME} --owner root --group root --no-same-owner --strip-components=1 \
     && wget ${HADOOP_AWS_URL}/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
-    && mkdir -p $HADOOP_HOME/share/lib/common/lib \
-    && mv hadoop-aws-${HADOOP_VERSION}.jar $HADOOP_HOME/share/lib/common/lib \
-    && wget https://minio.lab.sspcloud.fr/alexisdondon/spark/spark-3.1.1-bin-custom-spark-hadoopprovided.tgz \
-    && tar xzf spark-3.1.1-bin-custom-spark-hadoopprovided.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
-    && wget ${HIVE_URL}apache-hive-${HIVE_VERSION}-bin.tar.gz \
-    && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C $HIVE_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && mkdir -p ${HADOOP_HOME}/share/lib/common/lib \
+    && mv hadoop-aws-${HADOOP_VERSION}.jar ${HADOOP_HOME}/share/lib/common/lib \
+    && wget ${S3_BUCKET}/${SPARK_BUILD}.tgz \
+    && tar xzf ${SPARK_BUILD}.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
+    && wget ${HIVE_URL}/apache-hive-${HIVE_VERSION}-bin.tar.gz \
+    && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C ${HIVE_HOME} --owner root --group root --no-same-owner --strip-components=1 \
     && wget https://jdbc.postgresql.org/download/postgresql-42.2.18.jar \
-    && mv postgresql-42.2.18.jar $HIVE_HOME/lib/postgresql-jdbc.jar \
-    && rm $HIVE_HOME/lib/guava-14.0.1.jar \
-    && cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib/ \
+    && mv postgresql-42.2.18.jar ${HIVE_HOME}/lib/postgresql-jdbc.jar \
+    && rm ${HIVE_HOME}/lib/guava-14.0.1.jar \
+    && cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-27.0-jre.jar ${HIVE_HOME}/lib/ \
     && wget https://repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar \
-    && mv jline-2.14.6.jar $HIVE_HOME/lib/ \
-    && rm $HIVE_HOME/lib/jline-2.12.jar \
+    && mv jline-2.14.6.jar ${HIVE_HOME}/lib/ \
+    && rm ${HIVE_HOME}/lib/jline-2.12.jar \
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow
 
-RUN pip install jupyterlab-git jupyterlab_latex & \
-    jupyter labextension install --no-build @jupyterlab/git @jupyterlab/latex & \
-    jupyter serverextension enable --sys-prefix jupyterlab_latex jupyterlab_git
-
-RUN jupyter lab build
+RUN pip install jupyterlab-git
 
 ADD spark-env.sh $SPARK_HOME/conf
 ADD entrypoint.sh /opt/entrypoint.sh
@@ -82,7 +76,7 @@ RUN chmod +x /opt/entrypoint.sh $SPARK_HOME/conf/spark-env.sh
 
 ENV PYTHONPATH="$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip"
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M
-ENV JAVA_HOME "/usr/lib/jvm/java-8-openjdk-amd64/jre/"
+ENV JAVA_HOME "/usr/lib/jvm/java-11-openjdk-amd64"
 ENV HADOOP_OPTIONAL_TOOLS "hadoop-aws"
 ENV PATH="${JAVA_HOME}/bin:${SPARK_HOME}/bin:${HADOOP_HOME}/bin:${PATH}"
 

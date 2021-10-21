@@ -1,12 +1,12 @@
 # What is jupyter-datascience?
 
-This is a docker image based on https://github.com/jupyter/docker-stacks on which we added spark 2.4.5 and hadoop 3.2.1.
+This is a docker image based on https://github.com/jupyter/docker-stacks on which we add Spark with Hadoop, Hive and Kubernetes support (built [here](https://github.com/InseeFrLab/Spark-hive)).
 
 # How to use it
 
 This image is published on [DockerHub](https://hub.docker.com/r/inseefrlab/jupyter-datascience).
-Please visit https://github.com/jupyter/docker-stacks for knowing how to use this image.
+Please visit https://github.com/jupyter/docker-stacks to find out how to use this image.
 
 # How to contribute
 
-If you find something is missing or going wrong with this image, don't hesitate to let us know, either with an issue or by submitting a PR.
+If you find something is missing or wrong with this image, don't hesitate to let us know, either through an issue or by submitting a PR.

@@ -66,7 +66,7 @@ RUN cd /tmp \
     && rm ${HIVE_HOME}/lib/jline-2.12.jar \
     && rm -rf /tmp/*
 
-RUN pip install s3fs hvac boto3 pyarrow
+RUN pip install s3fs hvac boto3 pyarrow pymongo
 
 RUN pip install jupyterlab-git
 

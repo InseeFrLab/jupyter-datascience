@@ -2,9 +2,9 @@ FROM jupyter/datascience-notebook:python-3.9.7
 
 USER root
 
-ARG SPARK_VERSION=3.1.2
+ARG SPARK_VERSION=3.2.0
 ARG HADOOP_VERSION=3.3.1
-ARG HIVE_VERSION=2.3.7
+ARG HIVE_VERSION=2.3.9
 
 ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}"
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
@@ -74,7 +74,7 @@ ADD spark-env.sh $SPARK_HOME/conf
 ADD entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh $SPARK_HOME/conf/spark-env.sh
 
-ENV PYTHONPATH="$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip"
+ENV PYTHONPATH="$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9.2-src.zip"
 ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M
 ENV JAVA_HOME "/usr/lib/jvm/java-11-openjdk-amd64"
 ENV HADOOP_OPTIONAL_TOOLS "hadoop-aws"

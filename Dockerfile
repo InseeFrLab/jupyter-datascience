@@ -66,7 +66,7 @@ RUN cd /tmp \
     && rm ${HIVE_HOME}/lib/jline-2.12.jar \
     && rm -rf /tmp/*
 
-RUN pip install s3fs hvac boto3 pyarrow pymongo dvc[s3] jupyterlab-git
+RUN pip install s3fs hvac boto3 pyarrow pymongo dvc[s3] plotly jupyterlab-git
 
 ADD spark-env.sh $SPARK_HOME/conf
 ADD entrypoint.sh /opt/entrypoint.sh

@@ -2,7 +2,7 @@ FROM jupyter/datascience-notebook:python-3.9.7
 
 USER root
 
-ARG SPARK_VERSION=3.2.0
+ARG SPARK_VERSION=3.2.1
 ARG HADOOP_VERSION=3.3.1
 ARG HIVE_VERSION=2.3.9
 
@@ -10,7 +10,8 @@ ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSI
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
 ARG HIVE_URL="https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}"
 ARG SPARK_BUILD="spark-${SPARK_VERSION}-bin-hadoop-${HADOOP_VERSION}-hive-${HIVE_VERSION}"
-ARG S3_BUCKET="https://minio.lab.sspcloud.fr/projet-onyxia/spark-build"
+ARG S3_BUCKET="https://minio.lab.sspcloud.fr/projet-onyxia/build"
+ARG HIVE_AUTHENTICATION_JAR="hive-authentication.jar"
 
 ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
@@ -53,7 +54,7 @@ RUN cd /tmp \
     && wget ${HADOOP_AWS_URL}/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
     && mkdir -p ${HADOOP_HOME}/share/lib/common/lib \
     && mv hadoop-aws-${HADOOP_VERSION}.jar ${HADOOP_HOME}/share/lib/common/lib \
-    && wget ${S3_BUCKET}/${SPARK_BUILD}.tgz \
+    && wget ${S3_BUCKET}/spark-hive/${SPARK_BUILD}.tgz \
     && tar xzf ${SPARK_BUILD}.tgz -C $SPARK_HOME --owner root --group root --no-same-owner --strip-components=1 \
     && wget ${HIVE_URL}/apache-hive-${HIVE_VERSION}-bin.tar.gz \
     && tar xzf apache-hive-${HIVE_VERSION}-bin.tar.gz -C ${HIVE_HOME} --owner root --group root --no-same-owner --strip-components=1 \
@@ -64,6 +65,8 @@ RUN cd /tmp \
     && wget https://repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar \
     && mv jline-2.14.6.jar ${HIVE_HOME}/lib/ \
     && rm ${HIVE_HOME}/lib/jline-2.12.jar \
+    && wget ${S3_BUCKET}/hive-authentication/${HIVE_AUTHENTICATION_JAR} \
+    && mv ${HIVE_AUTHENTICATION_JAR} ${HIVE_HOME}/lib/ \
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow pymongo dvc[s3] plotly jupyterlab-git

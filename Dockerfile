@@ -17,34 +17,11 @@ ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
 ENV HIVE_HOME="/opt/hive"
 
-RUN apt-get -y update && \
-    apt-get install --no-install-recommends -y openjdk-11-jre-headless \
-                                               ca-certificates-java \
-                                               vim \
-                                               jq \
-                                               bash-completion \ 
-                                               unzip && \
+# Install common softwares
+RUN apt-get -y update && \ 
+    curl -s https://raw.githubusercontent.com/InseeFrLab/onyxia/main/resources/common-software-docker-images.sh | bash -s && \
+    apt-get -y install tini openjdk-11-jre-headless chromium-browser && \
     rm -rf /var/lib/apt/lists/*
-
-# Installing mc
-
-RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc && \
-    chmod +x /usr/local/bin/mc
-
-# Installing vault
-
-RUN cd /usr/bin && \
-    wget -O vault.zip https://releases.hashicorp.com/vault/1.8.4/vault_1.8.4_linux_amd64.zip && \
-    unzip vault.zip && \
-    rm vault.zip
-RUN vault -autocomplete-install
-
-# Installing kubectl
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
-    chmod +x ./kubectl && \
-    mv ./kubectl /usr/local/bin/kubectl
-
-RUN kubectl completion bash >/etc/bash_completion.d/kubectl
 
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME $HIVE_HOME
 

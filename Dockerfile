@@ -5,6 +5,7 @@ USER root
 ARG SPARK_VERSION=3.2.1
 ARG HADOOP_VERSION=3.3.1
 ARG HIVE_VERSION=2.3.9
+ARG HIVE_LISTENER_VERSION=0.0.1
 
 ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}"
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"
@@ -12,6 +13,7 @@ ARG HIVE_URL="https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}"
 ARG SPARK_BUILD="spark-${SPARK_VERSION}-bin-hadoop-${HADOOP_VERSION}-hive-${HIVE_VERSION}"
 ARG S3_BUCKET="https://minio.lab.sspcloud.fr/projet-onyxia/build"
 ARG HIVE_AUTHENTICATION_JAR="hive-authentication.jar"
+ARG HIVE_LISTENER_JAR="hive-listener-${HIVE_LISTENER_VERSION}.jar"
 
 ENV HADOOP_HOME="/opt/hadoop"
 ENV SPARK_HOME="/opt/spark"
@@ -43,6 +45,8 @@ RUN cd /tmp \
     && rm ${HIVE_HOME}/lib/jline-2.12.jar \
     && wget ${S3_BUCKET}/hive-authentication/${HIVE_AUTHENTICATION_JAR} \
     && mv ${HIVE_AUTHENTICATION_JAR} ${HIVE_HOME}/lib/ \
+    && wget ${S3_BUCKET}/hive-listener/${HIVE_LISTENER_JAR} \
+    && mv ${HIVE_LISTENER_JAR} ${HIVE_HOME}/lib/ \
     && rm -rf /tmp/*
 
 RUN pip install s3fs hvac boto3 pyarrow pymongo dvc[s3] plotly jupyterlab-git

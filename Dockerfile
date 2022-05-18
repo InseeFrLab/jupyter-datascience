@@ -5,7 +5,7 @@ USER root
 ARG SPARK_VERSION=3.2.1
 ARG HADOOP_VERSION=3.3.1
 ARG HIVE_VERSION=2.3.9
-ARG HIVE_LISTENER_VERSION=0.0.2
+ARG HIVE_LISTENER_VERSION=0.0.3
 
 ARG HADOOP_URL="https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}"
 ARG HADOOP_AWS_URL="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws"

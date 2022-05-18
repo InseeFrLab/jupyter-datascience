@@ -23,6 +23,7 @@ ENV HIVE_HOME="/opt/hive"
 # Install common softwares
 RUN apt-get -y update && \ 
     curl -s https://raw.githubusercontent.com/InseeFrLab/onyxia/main/resources/common-software-docker-images.sh | bash -s && \
+    apt-get -y openjdk-11-jre-headless ca-certificates-java && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p $HADOOP_HOME $SPARK_HOME $HIVE_HOME
